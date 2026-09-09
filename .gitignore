@@ -1,0 +1,8 @@
+# TagUI temporales y perfiles
+tagui.log
+*.raw
+*.js
+chrome_profile/
+__pycache__/
+*.pyc
+bot.log
