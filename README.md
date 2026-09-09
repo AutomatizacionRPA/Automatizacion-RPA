@@ -1,14 +1,12 @@
-# 📌 UTN FRCU – Tecnologías para la Automatización [year]
+# 📌 UTN FRCU – Tecnologías para la Automatización 2026
 
 ## 👥 Team
-- **Team number:** [Enter number]
+- **Team number:** 4
 - **Members:**
-  - [Full Name]
-  - [Full Name]
-  - [Full Name]
-  - [Full Name]
-  - [Full Name]
-
+  - Delavalle Jeronimo
+  - Irigaray Mateo
+  - Masalles Ignacio 
+  - Plata Santiago
 ---
 
 ## 🤖 Bot Description
