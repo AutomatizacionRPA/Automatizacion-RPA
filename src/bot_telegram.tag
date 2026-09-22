@@ -1,54 +1,76 @@
 // =============================================================================
-// BOT RPA TELEGRAM - ETAPA 1
+// BOT RPA TELEGRAM - ETAPA 1 (CIRCUITO COMPLETO Y CORREGIDO)
 // =============================================================================
 
 https://web.telegram.org/a/
 wait 8
 
-echo Asegurese de tener el chat de prueba visible en pantalla
-ultimo_mensaje_atendido = ""
+echo Sesion lista. Monitoreando barra lateral...
 
 for ciclo from 1 to infinity
-    echo --- Monitoreo en curso ---
+    echo --- Buscando mensajes pendientes ---
 
-    // Selectores del resumen lateral y la hora
-    selector_resumen = "(//span[contains(@class, 'last-message-summary')])[1]"
-    selector_hora = "(//span[contains(@class, 'time') or contains(@class, 'message-time') or contains(@class, 'date')])[1]"
+    // 1. Detección y clic sobre el chat con badge numérico > 0.
+    //    El mensaje MÁS ANTIGUO con badge está MÁS ABAJO en la lista lateral de Telegram Web A.
+    //    Priorizar el ÚLTIMO candidato encontrado (mayor índice DOM) entre los chats con badge.
+    dom var elementos = document.querySelectorAll('.chatlist-chat, a.ListItem, .ListItem, .ListItem-button, .ChatListItem'); var elegidoIdx = -1; for (var i = 0; i < elementos.length; i++) { var el = elementos[i]; var txt = (el.innerText || ''); var lineas = txt.split('\n'); if (!lineas.length) continue; var ult = lineas[lineas.length - 1].trim(); if (/^\d+$/.test(ult) && parseInt(ult, 10) > 0) { elegidoIdx = i; } } if (elegidoIdx < 0) return "SIN_MENSAJES"; var e = elementos[elegidoIdx]; e.dispatchEvent(new MouseEvent('mousedown', { bubbles: true })); e.dispatchEvent(new MouseEvent('mouseup', { bubbles: true })); e.click(); return "CHAT_ABIERTO";
+    estado_chat = dom_result
 
-    if present(selector_resumen)
-        // Lectura nativa sin el signo '+'
-        read selector_resumen to mensaje_recibido
-        js mensaje_recibido = mensaje_recibido.trim()
+    if estado_chat == "CHAT_ABIERTO"
+        echo Chat detectado. Ingresando a la conversacion...
+        wait 3
 
-        firma_actual = mensaje_recibido
+        // 2. Extraer el texto entrante omitiendo horas y mensajes propios
+        dom var nodos = document.querySelectorAll('.message-content, .text-content'); var txt = ''; for (var i = nodos.length - 1; i >= 0; i--) { if (!nodos[i].closest('.own, .is-out')) { var clone = nodos[i].cloneNode(true); var tiempos = clone.querySelectorAll('.time, .message-time, .date'); for (var j = 0; j < tiempos.length; j++) { tiempos[j].remove(); } txt = clone.innerText.replace(/(\r\n|\n|\r)/gm, ' ').trim(); break; } } return txt;
+        mensaje_cliente = dom_result
 
-        if present(selector_hora)
-            read selector_hora to hora_recibida
-            js hora_recibida = hora_recibida.trim()
-            firma_actual = mensaje_recibido + "_" + hora_recibida
+        echo Mensaje recibido: `mensaje_cliente`
 
-        // Si hay texto nuevo y no es el último ya respondido
-        if mensaje_recibido != "" and firma_actual != ultimo_mensaje_atendido
-            echo Nuevo mensaje detectado: `mensaje_recibido`
-            ultimo_mensaje_atendido = firma_actual
+        if mensaje_cliente != ""
+            // 1. Guardar mensaje recibido en in.txt 
+            dump `mensaje_cliente` to ../in.txt
 
-            // Llamada al script de Python con el mensaje como argumento
-            run python src/procesar_consulta.py `mensaje_recibido` to salida_bot
+            // 2. Ejecutar el script Python con el motor "py" de TagUI.
+            js var fs = require('fs'); fs.write('tagui_base.txt', flow_path);
+            py base2 = open('tagui_base.txt').read().strip()
+            py import subprocess, os
+            py os.path.exists(base2 + '/../out.txt') and os.remove(base2 + '/../out.txt')
+            py subprocess.run(['python', base2 + '/procesar_consulta.py'], check=False)
+            echo Respuesta generada por Python.
 
-            // Selector del campo de texto de Telegram Web A
-            selector_input = "//div[@contenteditable='true']"
+            // 3. Codificar out.txt en base64 para inyectarlo sin problemas de comillas/saltos
+            py import base64
+            py b64 = base64.b64encode(open(base2 + '/../out.txt', 'rb').read()).decode()
+            py print(b64)
 
-            if present(selector_input)
-                click selector_input
-                type selector_input as `salida_bot`[enter]
-                echo Respuesta enviada al usuario con exito.
-            else
-                echo No se encontro la caja de texto para escribir.
+            // 4. Enfocar el compositor e insertar la respuesta realEstructura Interna de los Grupos
+            js var expr = "(function(){var b=atob(" + JSON.stringify(py_result) + ");var u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var t=new TextDecoder('utf-8').decode(u);var el=document.querySelector('.ProseMirror, .input-message-input[contenteditable=\"true\"], div[contenteditable=\"true\"], textarea');if(!el)return 'NO_INPUT';el.focus();var ok=false;if(document.execCommand){ok=document.execCommand('insertText',false,t);}if(!ok||el.innerText.trim()===''){el.innerText=t;el.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText',data:t}));}return 'INSERT:'+ok+':'+t.length;})()";
+            js estado_insert = chrome_step('Runtime.evaluate',{expression: expr});
+            echo Estado de la insercion: `estado_insert`
 
+            // 5. Enviar con Enter confiable via CDP (evento real del navegador).
+            js chrome_step('Input.dispatchKeyEvent', {type: 'keyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13, text: '\r', unmodifiedText: '\r'});
+            js chrome_step('Input.dispatchKeyEvent', {type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13});
             wait 2
-        else
-            echo En espera: Sin mensajes nuevos o mensaje ya respondido.
-    else
-        echo En espera: No se visualiza el elemento en pantalla.
 
-    wait 3
+            if estado_insert contains "INSERT:true"
+                echo Mensaje despachado al usuario correctamente.
+            else
+                echo ALERTA: No se pudo insertar la respuesta en la caja de texto.
+        else
+            echo Chat sin contenido valido para responder.
+
+        // 5. Salir del chat: Clic en el fondo neutro para liberar foco y deseleccionar
+        dom var fondo = document.querySelector('.messages-container, .bubbles, .chat-background') || document.body; fondo.dispatchEvent(new MouseEvent('click', { bubbles: true })); document.activeElement.blur();
+        wait 1
+        // Escape via CDP (reemplaza 'keyboard [esc]', que usa SikuliX y se cuelga con Java 32 bits)
+        js chrome_step('Input.dispatchKeyEvent', {type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27});
+        js chrome_step('Input.dispatchKeyEvent', {type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27});
+
+        // Respaldo de navegación hacia atrás en caso de vista fija
+        dom if (window.location.hash || document.querySelector('.middle-column-open')) { window.history.back(); }
+        wait 2
+    else
+        echo En espera: Sin mensajes pendientes en la barra lateral.
+
+    wait 4

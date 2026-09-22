@@ -4,86 +4,175 @@ import os
 import difflib
 from datetime import datetime
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LOG_FILE = os.path.join(BASE_DIR, "..", "bot.log")
-CSV_PATH = os.path.join(BASE_DIR, "..", "data", "cursos.csv")
+# Rutas absolutas calculadas respecto a este archivo (src/)
+SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.abspath(os.path.join(SRC_DIR, ".."))
 
-def registrar_log(tipo, detalle):
+LOG_FILE = os.path.join(ROOT_DIR, "bot.log")
+CSV_PATH = os.path.join(ROOT_DIR, "data", "cursos.csv")
+PATH_IN = os.path.join(ROOT_DIR, "in.txt")
+PATH_OUT = os.path.join(ROOT_DIR, "out.txt")
+
+def registrar_log(tipo, entrada, salida):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open(LOG_FILE, mode="a", encoding="utf-8") as f:
-        f.write(f"[{timestamp}] [{tipo}] {detalle}\n")
+    try:
+        with open(LOG_FILE, mode="a", encoding="utf-8") as f:
+            f.write(f"[{timestamp}] [{tipo}] IN: '{entrada}' | OUT: '{salida.replace(chr(10), ' ')}'\n")
+    except Exception:
+        pass
+
+def obtener_menu_bienvenida():
+    return (
+        "👋 ¡Hola! Bienvenido/a al Asistente de Cursos.\n\n"
+        "Estoy acá para ayudarte a consultar nuestra oferta de cursos de forma rápida y sencilla.\n\n"
+        "📚 Para buscar información, escribí el nombre del curso que te interesa.\n\n"
+        "Por ejemplo:\n"
+        "• Peluquería\n"
+        "• Programación\n"
+        "• Maquillaje\n"
+        "• Barbería"
+    )
 
 def formatear_curso(data):
     return (
-        f"Curso: {data['curso']}\n"
-        f"• Docente: {data['docente']}\n"
-        f"• Días: {data['dias']}\n"
-        f"• Horario: {data['horario']} hs\n"
-        f"• Arancel: {data['precio']}\n"
-        f"• Detalle: {data['descripcion']}"
+        f"Curso: {data.get('curso', '')}\n"
+        f"• Docente: {data.get('docente', '')}\n"
+        f"• Días: {data.get('dias', '')}\n"
+        f"• Horario: {data.get('horario', '')} hs\n"
+        f"• Arancel: {data.get('precio', '')}\n"
+        f"• Detalle: {data.get('descripcion', '')}"
     )
 
-def procesar_mensaje(mensaje_usuario):
-    consulta = mensaje_usuario.strip().lower()
+def procesar_consulta(texto_crudo):
+    consulta = texto_crudo.strip().lower()
 
     if not consulta:
-        registrar_log("WARN", "Mensaje recibido vacío.")
-        return "No detecté texto. Escribí el nombre de un curso o 'menu' para consultar."
+        res = "No detecté texto en tu mensaje. Escribí 'menu' o el nombre de un curso."
+        registrar_log("WARN_VACIO", texto_crudo, res)
+        return res
 
-    if consulta in ["hola", "inicio", "/start", "ayuda", "menu"]:
-        registrar_log("INFO", f"Comando de ayuda ejecutado: '{consulta}'")
-        return (
-            "¡Hola! Escribí una opción para ver aranceles y horarios:\n"
-            "• Peluquería\n• Python\n• Maquillaje\n• Barbería"
-        )
+    palabras_saludo = ["hola", "buen dia", "buenas", "buenas tardes", "buenas noches", "inicio", "/start", "ayuda", "menu", "menú", "cursos"]
+    # Despedidas
+    palabras_despedida = ["adios", "adiós", "chau", "chao", "chaooo", "bye", "nos vemos", "nos vemos pronto", "hasta luego", "hasta pronto", "gracias", "muchas gracias"]
+    # Coincidencia directa o por substring (despedidas primero)
+    if any(s in consulta for s in palabras_despedida):
+        res = "👋 ¡Gracias por tu consulta! Nos vemos pronto."
+        registrar_log("INFO_DESPEDIDA", texto_crudo, res)
+        return res
+    # Coincidencia directa o por substring (saludos/menu)
+    if any(s in consulta for s in palabras_saludo):
+        res = obtener_menu_bienvenida()
+        registrar_log("INFO_MENU", texto_crudo, res)
+        return res
+    # Fuzzy para capturar variantes con errores tipográficos (mnu, meni, meny, menuu, mnú, etc.)
+    tokens_menu = consulta.split()
+    candidatos_menu = ["menu", "menú", "cursos", "ayuda"]
+    for t in tokens_menu:
+        if len(t) < 2:
+            continue
+        matches_m = difflib.get_close_matches(t, candidatos_menu, n=1, cutoff=0.6)
+        if matches_m:
+            ratio_m = difflib.SequenceMatcher(None, t, matches_m[0]).ratio()
+            if ratio_m >= 0.7:  # umbral razonable para 3-4 letras
+                res = obtener_menu_bienvenida()
+                registrar_log(f"INFO_MENU_FUZZY_{ratio_m:.2f}", texto_crudo, res)
+                return res
+    # También intentar contra la lista completa de saludos con cutoff suave
+    for t in tokens_menu:
+        matches_m2 = difflib.get_close_matches(t, palabras_saludo, n=1, cutoff=0.65)
+        if matches_m2:
+            ratio_m2 = difflib.SequenceMatcher(None, t, matches_m2[0]).ratio()
+            if ratio_m2 >= 0.7:
+                res = obtener_menu_bienvenida()
+                registrar_log(f"INFO_MENU_FUZZY2_{ratio_m2:.2f}", texto_crudo, res)
+                return res
+    # Fuzzy para despedidas
+    for t in tokens_menu:
+        matches_d = difflib.get_close_matches(t, ["adios", "adiós", "chau", "chao", "bye", "gracias"], n=1, cutoff=0.65)
+        if matches_d:
+            ratio_d = difflib.SequenceMatcher(None, t, matches_d[0]).ratio()
+            if ratio_d >= 0.7:
+                res = "👋 ¡Gracias por tu consulta! Nos vemos pronto."
+                registrar_log(f"INFO_DESPEDIDA_FUZZY_{ratio_d:.2f}", texto_crudo, res)
+                return res
+    # Despedidas con frases completas
+    if "nos vemos" in consulta or "hasta luego" in consulta or "hasta pronto" in consulta:
+        res = "👋 ¡Gracias por tu consulta! Nos vemos pronto."
+        registrar_log("INFO_DESPEDIDA_FR", texto_crudo, res)
+        return res
 
     if not os.path.exists(CSV_PATH):
-        registrar_log("ERROR_CRITICO", f"No existe el archivo {CSV_PATH}")
-        return "Error interno: Base de datos no disponible temporalmente."
+        res = "Error interno: La base de datos de cursos no se encuentra disponible."
+        registrar_log("ERROR_CSV_FALTA", texto_crudo, res)
+        return res
 
     cursos = {}
     try:
         with open(CSV_PATH, mode="r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                cursos[row["keyword"].lower()] = row
+                if row.get("keyword"):
+                    cursos[row["keyword"].strip().lower()] = row
     except Exception as e:
-        registrar_log("ERROR_CSV", f"Fallo al abrir CSV: {str(e)}")
-        return "Error interno al leer los registros de cursos."
+        res = f"Error al leer la base de datos: {str(e)}"
+        registrar_log("ERROR_CSV_LECTURA", texto_crudo, res)
+        return res
 
-    # 1. Coincidencia exacta o contenida
+    # 1. Coincidencia directa
     for kw, datos in cursos.items():
         if kw in consulta:
-            registrar_log("EXITO_EXACTO", f"Coincidencia directa con '{kw}'")
-            return formatear_curso(datos)
+            res = formatear_curso(datos)
+            registrar_log("EXITO_DIRECTO", texto_crudo, res)
+            return res
 
-    # 2. Tolerancia a errores de tipeo (Fuzzy Matching)
-    palabras = consulta.split()
+    # 2. Fuzzy Matching
+    tokens = consulta.split()
     claves = list(cursos.keys())
     mejor_match = None
     mejor_ratio = 0.0
 
-    for token in palabras:
-        coincidencias = difflib.get_close_matches(token, claves, n=1, cutoff=0.6)
-        if coincidencias:
-            palabra_candidata = coincidencias[0]
-            ratio = difflib.SequenceMatcher(None, token, palabra_candidata).ratio()
+    for t in tokens:
+        matches = difflib.get_close_matches(t, claves, n=1, cutoff=0.6)
+        if matches:
+            candidato = matches[0]
+            ratio = difflib.SequenceMatcher(None, t, candidato).ratio()
             if ratio > mejor_ratio:
                 mejor_ratio = ratio
-                mejor_match = palabra_candidata
+                mejor_match = candidato
 
     if mejor_match:
         if mejor_ratio >= 0.75:
-            registrar_log("CORRECCION_AUTO", f"Aceptado '{mejor_match}' (Ratio: {mejor_ratio:.2f}) para '{consulta}'")
-            return f"*(Inferí que consultaste por '{mejor_match.capitalize()}')*\n\n" + formatear_curso(cursos[mejor_match])
+            res = f"*(Inferí que consultaste por '{mejor_match.capitalize()}')*\n\n" + formatear_curso(cursos[mejor_match])
+            registrar_log(f"EXITO_FUZZY_{mejor_ratio:.2f}", texto_crudo, res)
+            return res
         else:
-            registrar_log("SUGERENCIA", f"Duda con '{mejor_match}' (Ratio: {mejor_ratio:.2f}) para '{consulta}'")
-            return f"¿Quisiste consultar por '{mejor_match.capitalize()}'? Escribilo para confirmar."
+            res = f"¿Quisiste consultar por '{mejor_match.capitalize()}'? Escribilo para confirmar."
+            registrar_log(f"SUGERENCIA_{mejor_ratio:.2f}", texto_crudo, res)
+            return res
 
-    # 3. Término no reconocido
-    registrar_log("NO_RECONOCIDO", f"Consulta sin coincidencias: '{consulta}'")
-    return "No identifiqué el curso solicitado. Escribí 'menu' para consultar opciones disponibles."
+    # 3. No reconocido
+    res = (
+        "No logré identificar el curso solicitado.\n\n"
+        "Escribí 'menu' para revisar los cursos disponibles o verificá la palabra ingresada."
+    )
+    registrar_log("NO_RECONOCIDO", texto_crudo, res)
+    return res
 
 if __name__ == "__main__":
-    entrada = " ".join(sys.argv[1:]) if len(sys.argv) > 1 else ""
-    print(procesar_mensaje(entrada))
+    texto_recibido = ""
+
+    # Lectura obligatoria con codificación UTF-8 (prioriza la raíz; fallback en src/)
+    for ruta_in in (PATH_IN, os.path.join(SRC_DIR, "in.txt")):
+        if os.path.exists(ruta_in):
+            try:
+                with open(ruta_in, mode="r", encoding="utf-8") as f_in:
+                    texto_recibido = f_in.read()
+            except Exception:
+                texto_recibido = ""
+            break
+
+    salida = procesar_consulta(texto_recibido)
+
+    # Escritura asegurada en out.txt en UTF-8
+    with open(PATH_OUT, mode="w", encoding="utf-8") as f_out:
+        f_out.write(salida)
