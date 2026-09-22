@@ -1,6 +1,6 @@
-// =============================================================================
-// BOT RPA TELEGRAM - ETAPA 1 (CIRCUITO COMPLETO Y CORREGIDO)
-// =============================================================================
+// ===================================
+// BOT RPA TELEGRAM - ETAPA 1 
+// ===================================
 
 https://web.telegram.org/a/
 wait 8
@@ -10,10 +10,8 @@ echo Sesion lista. Monitoreando barra lateral...
 for ciclo from 1 to infinity
     echo --- Buscando mensajes pendientes ---
 
-    // 1. Detección y clic sobre el chat con badge numérico > 0.
-    //    El mensaje MÁS ANTIGUO con badge está MÁS ABAJO en la lista lateral de Telegram Web A.
-    //    Priorizar el ÚLTIMO candidato encontrado (mayor índice DOM) entre los chats con badge.
-    dom var elementos = document.querySelectorAll('.chatlist-chat, a.ListItem, .ListItem, .ListItem-button, .ChatListItem'); var elegidoIdx = -1; for (var i = 0; i < elementos.length; i++) { var el = elementos[i]; var txt = (el.innerText || ''); var lineas = txt.split('\n'); if (!lineas.length) continue; var ult = lineas[lineas.length - 1].trim(); if (/^\d+$/.test(ult) && parseInt(ult, 10) > 0) { elegidoIdx = i; } } if (elegidoIdx < 0) return "SIN_MENSAJES"; var e = elementos[elegidoIdx]; e.dispatchEvent(new MouseEvent('mousedown', { bubbles: true })); e.dispatchEvent(new MouseEvent('mouseup', { bubbles: true })); e.click(); return "CHAT_ABIERTO";
+    // 1. Detección y clic sobre el chat con badge numérico > 0 (ES5 estricto)
+    dom var elementos = document.querySelectorAll('.chatlist-chat, a.ListItem, .ListItem-button'); for (var i = 0; i < elementos.length; i++) { var lineas = elementos[i].innerText.split('\n'); var ult = lineas[lineas.length - 1].trim(); if (/^\d+$/.test(ult) && parseInt(ult, 10) > 0) { elementos[i].dispatchEvent(new MouseEvent('mousedown', { bubbles: true })); elementos[i].dispatchEvent(new MouseEvent('mouseup', { bubbles: true })); elementos[i].click(); return "CHAT_ABIERTO"; } } return "SIN_MENSAJES";
     estado_chat = dom_result
 
     if estado_chat == "CHAT_ABIERTO"
