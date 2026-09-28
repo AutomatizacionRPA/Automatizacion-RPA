@@ -6,3 +6,7 @@ chrome_profile/
 __pycache__/
 *.pyc
 bot.log
+# Ignorar archivos de log
+*.log
+logs/
+
