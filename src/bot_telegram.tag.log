@@ -1,14 +1,17 @@
 
-START - automation started - Tue Sep 22 2026 18:12:50 GMT-0300 (Hora estándar de Argentina)
+START - automation started - Thu Sep 24 2026 21:17:31 GMT-0300 (Hora estándar de Argentina)
 https://web.telegram.org/a/ - Telegram
 
 wait 8
 Sesion lista. Monitoreando barra lateral...
 --- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
 Chat detectado. Ingresando a la conversacion...
 wait 3
-Mensaje recibido: DAME EL MENU
-dump DAME EL MENU to ../in.txt
+Mensaje recibido: Buenas
+dump Buenas to ../in.txt
 py base2 = open('tagui_base.txt').read().strip()
 py import subprocess, os
 py os.path.exists(base2 + '/../out.txt') and os.remove(base2 + '/../out.txt')
@@ -17,7 +20,7 @@ Respuesta generada por Python.
 py import base64
 py b64 = base64.b64encode(open(base2 + '/../out.txt', 'rb').read()).decode()
 py print(b64)
-Estado de la insercion: {"id":6,"result":{"result":{"type":"string","value":"INSERT:true:286"}}}
+Estado de la insercion: {"id":7,"result":{"result":{"type":"string","value":"INSERT:true:286"}}}
 wait 2
 Mensaje despachado al usuario correctamente.
 wait 1
@@ -26,8 +29,8 @@ wait 4
 --- Buscando mensajes pendientes ---
 Chat detectado. Ingresando a la conversacion...
 wait 3
-Mensaje recibido: AURA
-dump AURA to ../in.txt
+Mensaje recibido: hola
+dump hola to ../in.txt
 py base2 = open('tagui_base.txt').read().strip()
 py import subprocess, os
 py os.path.exists(base2 + '/../out.txt') and os.remove(base2 + '/../out.txt')
@@ -36,7 +39,7 @@ Respuesta generada por Python.
 py import base64
 py b64 = base64.b64encode(open(base2 + '/../out.txt', 'rb').read()).decode()
 py print(b64)
-Estado de la insercion: {"id":15,"result":{"result":{"type":"string","value":"INSERT:true:128"}}}
+Estado de la insercion: {"id":16,"result":{"result":{"type":"string","value":"INSERT:true:286"}}}
 wait 2
 Mensaje despachado al usuario correctamente.
 wait 1
@@ -45,8 +48,8 @@ wait 4
 --- Buscando mensajes pendientes ---
 Chat detectado. Ingresando a la conversacion...
 wait 3
-Mensaje recibido: gonzalo amilivia
-dump gonzalo amilivia to ../in.txt
+Mensaje recibido: Maquiyage
+dump Maquiyage to ../in.txt
 py base2 = open('tagui_base.txt').read().strip()
 py import subprocess, os
 py os.path.exists(base2 + '/../out.txt') and os.remove(base2 + '/../out.txt')
@@ -55,7 +58,7 @@ Respuesta generada por Python.
 py import base64
 py b64 = base64.b64encode(open(base2 + '/../out.txt', 'rb').read()).decode()
 py print(b64)
-Estado de la insercion: {"id":24,"result":{"result":{"type":"string","value":"INSERT:true:128"}}}
+Estado de la insercion: {"id":25,"result":{"result":{"type":"string","value":"INSERT:true:63"}}}
 wait 2
 Mensaje despachado al usuario correctamente.
 wait 1
@@ -64,8 +67,8 @@ wait 4
 --- Buscando mensajes pendientes ---
 Chat detectado. Ingresando a la conversacion...
 wait 3
-Mensaje recibido: BALBERIA
-dump BALBERIA to ../in.txt
+Mensaje recibido: maquillaje
+dump maquillaje to ../in.txt
 py base2 = open('tagui_base.txt').read().strip()
 py import subprocess, os
 py os.path.exists(base2 + '/../out.txt') and os.remove(base2 + '/../out.txt')
@@ -74,7 +77,7 @@ Respuesta generada por Python.
 py import base64
 py b64 = base64.b64encode(open(base2 + '/../out.txt', 'rb').read()).decode()
 py print(b64)
-Estado de la insercion: {"id":33,"result":{"result":{"type":"string","value":"INSERT:true:204"}}}
+Estado de la insercion: {"id":34,"result":{"result":{"type":"string","value":"INSERT:true:166"}}}
 wait 2
 Mensaje despachado al usuario correctamente.
 wait 1
@@ -83,8 +86,8 @@ wait 4
 --- Buscando mensajes pendientes ---
 Chat detectado. Ingresando a la conversacion...
 wait 3
-Mensaje recibido: 0:12
-dump 0:12 to ../in.txt
+Mensaje recibido: barber
+dump barber to ../in.txt
 py base2 = open('tagui_base.txt').read().strip()
 py import subprocess, os
 py os.path.exists(base2 + '/../out.txt') and os.remove(base2 + '/../out.txt')
@@ -93,17 +96,41 @@ Respuesta generada por Python.
 py import base64
 py b64 = base64.b64encode(open(base2 + '/../out.txt', 'rb').read()).decode()
 py print(b64)
-Estado de la insercion: {"id":42,"result":{"result":{"type":"string","value":"INSERT:true:128"}}}
+Estado de la insercion: {"id":43,"result":{"result":{"type":"string","value":"INSERT:true:204"}}}
 wait 2
 Mensaje despachado al usuario correctamente.
 wait 1
 wait 2
 wait 4
 --- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
 Chat detectado. Ingresando a la conversacion...
 wait 3
-Mensaje recibido: Balbelo
-dump Balbelo to ../in.txt
+Mensaje recibido: gracias
+dump gracias to ../in.txt
 py base2 = open('tagui_base.txt').read().strip()
 py import subprocess, os
 py os.path.exists(base2 + '/../out.txt') and os.remove(base2 + '/../out.txt')
@@ -112,87 +139,74 @@ Respuesta generada por Python.
 py import base64
 py b64 = base64.b64encode(open(base2 + '/../out.txt', 'rb').read()).decode()
 py print(b64)
-Estado de la insercion: {"id":51,"result":{"result":{"type":"string","value":"INSERT:true:128"}}}
+Estado de la insercion: {"id":60,"result":{"result":{"type":"string","value":"INSERT:true:46"}}}
 wait 2
 Mensaje despachado al usuario correctamente.
 wait 1
 wait 2
 wait 4
 --- Buscando mensajes pendientes ---
-Chat detectado. Ingresando a la conversacion...
-wait 3
-Mensaje recibido: 0:01
-dump 0:01 to ../in.txt
-py base2 = open('tagui_base.txt').read().strip()
-py import subprocess, os
-py os.path.exists(base2 + '/../out.txt') and os.remove(base2 + '/../out.txt')
-py subprocess.run(['python', base2 + '/procesar_consulta.py'], check=False)
-Respuesta generada por Python.
-py import base64
-py b64 = base64.b64encode(open(base2 + '/../out.txt', 'rb').read()).decode()
-py print(b64)
-Estado de la insercion: {"id":60,"result":{"result":{"type":"string","value":"INSERT:true:128"}}}
-wait 2
-Mensaje despachado al usuario correctamente.
-wait 1
-wait 2
+En espera: Sin mensajes pendientes en la barra lateral.
 wait 4
 --- Buscando mensajes pendientes ---
-Chat detectado. Ingresando a la conversacion...
-wait 3
-Mensaje recibido: Varbería
-dump Varbería to ../in.txt
-py base2 = open('tagui_base.txt').read().strip()
-py import subprocess, os
-py os.path.exists(base2 + '/../out.txt') and os.remove(base2 + '/../out.txt')
-py subprocess.run(['python', base2 + '/procesar_consulta.py'], check=False)
-Respuesta generada por Python.
-py import base64
-py b64 = base64.b64encode(open(base2 + '/../out.txt', 'rb').read()).decode()
-py print(b64)
-Estado de la insercion: {"id":69,"result":{"result":{"type":"string","value":"INSERT:true:204"}}}
-wait 2
-Mensaje despachado al usuario correctamente.
-wait 1
-wait 2
+En espera: Sin mensajes pendientes en la barra lateral.
 wait 4
 --- Buscando mensajes pendientes ---
-Chat detectado. Ingresando a la conversacion...
-wait 3
-Mensaje recibido: This message is not supported on the web version of Telegram
-dump This message is not supported on the web version of Telegram to ../in.txt
-py base2 = open('tagui_base.txt').read().strip()
-py import subprocess, os
-py os.path.exists(base2 + '/../out.txt') and os.remove(base2 + '/../out.txt')
-py subprocess.run(['python', base2 + '/procesar_consulta.py'], check=False)
-Respuesta generada por Python.
-py import base64
-py b64 = base64.b64encode(open(base2 + '/../out.txt', 'rb').read()).decode()
-py print(b64)
-Estado de la insercion: {"id":78,"result":{"result":{"type":"string","value":"INSERT:true:128"}}}
-wait 2
-Mensaje despachado al usuario correctamente.
-wait 1
-wait 2
+En espera: Sin mensajes pendientes en la barra lateral.
 wait 4
 --- Buscando mensajes pendientes ---
-Chat detectado. Ingresando a la conversacion...
-wait 3
-Mensaje recibido: Y cogo vendes?
-dump Y cogo vendes? to ../in.txt
-py base2 = open('tagui_base.txt').read().strip()
-py import subprocess, os
-py os.path.exists(base2 + '/../out.txt') and os.remove(base2 + '/../out.txt')
-py subprocess.run(['python', base2 + '/procesar_consulta.py'], check=False)
-Respuesta generada por Python.
-py import base64
-py b64 = base64.b64encode(open(base2 + '/../out.txt', 'rb').read()).decode()
-py print(b64)
-Estado de la insercion: {"id":87,"result":{"result":{"type":"string","value":"INSERT:true:128"}}}
-wait 2
-Mensaje despachado al usuario correctamente.
-wait 1
-wait 2
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
+wait 4
+--- Buscando mensajes pendientes ---
+En espera: Sin mensajes pendientes en la barra lateral.
 wait 4
 --- Buscando mensajes pendientes ---
 En espera: Sin mensajes pendientes en la barra lateral.

@@ -41,12 +41,12 @@ for ciclo from 1 to infinity
             py b64 = base64.b64encode(open(base2 + '/../out.txt', 'rb').read()).decode()
             py print(b64)
 
-            // 4. Enfocar el compositor e insertar la respuesta realEstructura Interna de los Grupos
+
             js var expr = "(function(){var b=atob(" + JSON.stringify(py_result) + ");var u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var t=new TextDecoder('utf-8').decode(u);var el=document.querySelector('.ProseMirror, .input-message-input[contenteditable=\"true\"], div[contenteditable=\"true\"], textarea');if(!el)return 'NO_INPUT';el.focus();var ok=false;if(document.execCommand){ok=document.execCommand('insertText',false,t);}if(!ok||el.innerText.trim()===''){el.innerText=t;el.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText',data:t}));}return 'INSERT:'+ok+':'+t.length;})()";
             js estado_insert = chrome_step('Runtime.evaluate',{expression: expr});
             echo Estado de la insercion: `estado_insert`
 
-            // 5. Enviar con Enter confiable via CDP (evento real del navegador).
+            // 4. Enviar con Enter confiable via CDP (evento real del navegador).
             js chrome_step('Input.dispatchKeyEvent', {type: 'keyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13, text: '\r', unmodifiedText: '\r'});
             js chrome_step('Input.dispatchKeyEvent', {type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13});
             wait 2
