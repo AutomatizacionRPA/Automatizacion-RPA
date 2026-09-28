@@ -28,9 +28,4 @@ tagui src/bot_telegram.tag
 ## 6. Verificación
 - Al recibir mensajes con badge, el bot debe responder al **chat con mensaje más antiguo** (FIFO inverso según orden DOM de la barra lateral).
 - Las respuestas incluyen menú, búsqueda de cursos (coincidencia directa + fuzzy) y detección de despedidas.
-- No debe colgarse por uso de SikuliX (se utiliza CDP de Chrome para envío/teclas).
 
-## 7. Notas
-- El paso `run` fue reemplazado por `py` + `subprocess` (compatible con Windows).
-- Envío de mensajes mediante `Input.dispatchKeyEvent` (Enter) vía CDP, evitando clipboard/SikuliX.
-- Archivos `in.txt`, `out.txt`, `bot.log` se generan en la raíz del proyecto.
