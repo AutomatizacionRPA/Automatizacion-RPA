@@ -9,4 +9,7 @@ bot.log
 # Ignorar archivos de log
 *.log
 logs/
+# Ignorar archivos de entrada/salida de mensajes
+out.txt
+in.txt
 
