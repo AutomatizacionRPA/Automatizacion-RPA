@@ -25,6 +25,10 @@ RPA bot that monitors Telegram Web A (`https://web.telegram.org/a/`), detects ch
    ```
 3. **Expected output**: for every chat with an unread badge, the bot opens the chat with the *oldest* pending message (FIFO), reads the incoming message, generates the reply via `src/procesar_consulta.py` (logs are written to `bot.log`), inserts the text into the composer and sends it with a trusted Enter event (CDP). No SikuliX dependency, so it does not hang.
 
+> 💡 **Need detailed setup instructions?**  
+> For step-by-step guidance on environment configuration, Git setup, and troubleshooting, check out our comprehensive guides:
+> - 📄 [Spanish Setup Guide (Instructivo en Español)](INSTRUCTIVO_INSTALACION.md)
+> - 📄 [English Installation Guide](installation_guide.md)
 ---
 
 ## 📝 Additional Notes
