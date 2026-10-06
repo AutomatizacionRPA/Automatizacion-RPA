@@ -17,6 +17,11 @@ RPA bot that monitors Telegram Web A (`https://web.telegram.org/a/`), detects ch
 
 ---
 
+## 🎥 Demo Video
+- **Demonstration:** [Watch the bot in action on Google Drive](https://drive.google.com/file/d/1yint_aGlrjSV4lXEGspCgQEhNGyWNQtr/view?usp=drive_link)
+
+---
+
 ## 🛠️ Usage Instructions
 1. **Install prerequisites**: Windows 10/11, Google Chrome, Python 3 (on PATH) and Java JRE/JDK. Unpack TagUI v6.114 into `C:\tagui\` (verify `C:\tagui\src\tagui.cmd`).
 2. **Run the bot**: log in to Telegram Web A in Chrome, then launch from the project root:
