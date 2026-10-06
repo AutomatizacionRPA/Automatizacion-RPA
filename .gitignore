@@ -13,3 +13,6 @@ logs/
 out.txt
 in.txt
 
+
+# Marcador de ruta usado por el .tag para invocar Python
+tagui_base.txt
